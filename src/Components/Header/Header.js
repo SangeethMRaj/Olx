@@ -1,4 +1,5 @@
-import React from 'react';
+import React,{useContext} from 'react';
+import { useHistory } from 'react-router-dom';
 
 import './Header.css';
 import OlxLogo from '../../assets/OlxLogo';
@@ -6,11 +7,19 @@ import Search from '../../assets/Search';
 import Arrow from '../../assets/Arrow';
 import SellButton from '../../assets/SellButton';
 import SellButtonPlus from '../../assets/SellButtonPlus';
+import { AuthContext, FirebaseContext } from '../../store/Context';
 function Header() {
+  const {user} = useContext(AuthContext)
+  const {firebase} = useContext(FirebaseContext)
+  const history = useHistory()
   return (
-    <div className="headerParentDiv">
+    <div  className="headerParentDiv">
       <div className="headerChildDiv">
-        <div className="brandName">
+        <div 
+        onClick={()=>{
+          history.push('/')
+        }}
+         className="brandName">
           <OlxLogo></OlxLogo>
         </div>
         <div className="placeSearch">
@@ -33,14 +42,34 @@ function Header() {
           <span> ENGLISH </span>
           <Arrow></Arrow>
         </div>
-        <div className="loginPage">
-          <span>Login</span>
+        {/* <div className="loginPage">
+          <span >{user ? `${user.displayName}` : 'Login' }</span>
           <hr />
+          
+        </div> */}
+
+        <div className="loginPage">
+          <span>{user ? `${user.displayName}` : null} </span>
+          
+          <span onClick={()=>{
+          history.push('/login')
+        }}>{!user ? 'Login' : null}</span>
         </div>
 
-        <div className="sellMenu">
+        {user && <span onClick={()=>{
+          firebase.auth().signOut();
+          history.push('/login') 
+
+        }} 
+        
+        >Logout</span>}
+        <div
+        onClick={()=>{
+          history.push('/create')
+        }}
+         className="sellMenu">
           <SellButton></SellButton>
-          <div className="sellMenuContent">
+          <div  className="sellMenuContent">
             <SellButtonPlus></SellButtonPlus>
             <span>SELL</span>
           </div>
